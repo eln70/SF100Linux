@@ -1,7 +1,7 @@
 # SF100Linux
 Linux software for Dediprog SF100 and SF600 SPI flash programmers
 
-## Building
+## Building for Linux
 To compile the project, first install required dependencies:
   - libusb-1.0
 
@@ -24,3 +24,14 @@ This will automatically detect the chip, read out the chip contents, replace
 the ones that differ and perform a read and verification after writing.
 
 For more advanced usage see `dpcmd --help`.
+
+## Building for MacOS
+Install brew/homebrew using the instructions here:
+https://brew.sh/
+
+Use brew to download and install libusb and pkg-config:
+```
+% brew install libusb
+% brew install pkg-config
+```
+Now, follow the instructions to build for Linux
