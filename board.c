@@ -73,7 +73,6 @@ void QueryBoard(int Index)
 
     memcpy(g_board_type, &vBuffer[0], 8); 
     
-    unsigned char ucData;
     if((strstr(g_board_type, "SF600PG2") != NULL))
     { 
         printf("		evy	UpdateSF600Flash\n");

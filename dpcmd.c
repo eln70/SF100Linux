@@ -398,12 +398,21 @@ void print_message_function(void* ptr)
 
 void GetLogPath(char* pBuf)
 {
-    memset(pBuf, 0, 512);
-    if (readlink("/proc/self/exe", pBuf, 512) != -1) {
-        if (strlen(pBuf) < (511 - sizeof("/log.txt")))
-            strcat(pBuf, "/log.txt");
-        //		printf("%s\n",pBuf);
-    }
+  const size_t path_size = 512;
+  memset(pBuf, 0, path_size);
+#ifdef __APPLE__
+  if (_NSGetExecutablePath(pBuf, &path_size) != 0) {
+    // Buffer size is too small.
+    exit(-1);
+  }  
+  *(strrchr(pBuf, '/')) = 0;
+#else
+  if (readlink("/proc/self/exe", pBuf, 512) != -1) {
+    exit(-1);
+  }
+#endif
+  if (strlen(pBuf) < (511 - sizeof("/log.txt")))
+    strcat(pBuf, "/log.txt");
 }
 
 void EnterStandaloneMode(int Index)

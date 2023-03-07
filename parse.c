@@ -11,7 +11,6 @@
 #define filebufsize 1024 * 1024
 #define min(a, b) (((a) > (b)) ? (b) : (a))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
-
 //using namespace pugi;
 //xml_document doc;
 
@@ -20,27 +19,37 @@ FILE* openChipInfoDb(void)
     FILE* fp = NULL;
     char Path[linebufsize];
 
+    
     memset(Path, 0, linebufsize);
-    if (readlink("/proc/self/exe", Path, 512) != -1) {
-        dirname(Path);
-        strcat(Path, "/ChipInfoDb.dedicfg");
-        //		printf("%s\n",Path);
-        if ((fp = fopen(Path, "rt")) == NULL) {
-            // ChipInfoDb.dedicfg not in program directory
-            dirname(Path);
-            dirname(Path);
-            strcat(Path, "/share/DediProg/ChipInfoDb.dedicfg");
-            //			printf("%s\n",Path);
-            if ((fp = fopen(Path, "rt")) == NULL)
-                fprintf(stderr, "Error opening file: %s\n", Path);
-        }
-    }
-
+#ifdef __APPLE__
+    const size_t path_size = linebufsize;
+    if (_NSGetExecutablePath(Path, &path_size) != 0) {
+    // Buffer size is too small.
+      return false;
+    }  
+    *(strrchr(Path, '/')) = 0;
+#else
+  if (readlink("/proc/self/exe", Path, 512) != -1) {
+    return false;
+  }
+#endif
+  dirname(Path);
+  strcat(Path, "/ChipInfoDb.dedicfg");
+  // printf("%s\n",Path);
+  if ((fp = fopen(Path, "rt")) == NULL) {
+    // ChipInfoDb.dedicfg not in program directory
+    dirname(Path);
+    dirname(Path);
+    strcat(Path, "/share/DediProg/ChipInfoDb.dedicfg");
+    //			printf("%s\n",Path);
+    if ((fp = fopen(Path, "rt")) == NULL)
+      fprintf(stderr, "Error opening file: %s\n", Path);
+  }
     //xml_parse_result result = doc.load_file( Path );
     //if ( result.status != xml_parse_status::status_ok )
     //	return;
 
-    return fp;
+  return fp;
 }
 
 long fsize(FILE* fp)
@@ -126,7 +135,7 @@ printf("evy- Dedi_Search_Chip_Db(RDIDCommand=0x%lx,UniqueID=0x%lx,search_all=%d)
             tok = strtok(test, "\"= \t");
             //printf("evy- UniqueID = 0x%lx\n",strtol(tok,NULL,16));
             Chip_Info->UniqueID = strtol(tok, NULL, 16);
-            if ((UniqueID == Chip_Info->UniqueID))
+            if (UniqueID == Chip_Info->UniqueID)
                 found_flag = 1;
             continue;
         }
@@ -162,7 +171,7 @@ printf("evy- Dedi_Search_Chip_Db(RDIDCommand=0x%lx,UniqueID=0x%lx,search_all=%d)
             tok = strtok(test, "\"= \t");
             //printf("evy- JedecDeviceID = 0x%lx\n",strtol(tok,NULL,16));
             Chip_Info->JedecDeviceID = strtol(tok, NULL, 16);
-            if ((UniqueID == Chip_Info->JedecDeviceID))	{
+            if (UniqueID == Chip_Info->JedecDeviceID)	{
 		found_flag = 1;
 	    }
             continue;
@@ -361,7 +370,7 @@ int Dedi_Search_Chip_Db(char* chTypeName, long RDIDCommand,
             tok = strtok(test, "\"= \t");
             //printf("UniqueID = 0x%lx\n",strtol(tok,NULL,16));
             Chip_Info_temp.UniqueID = strtol(tok, NULL, 16);
-            if ((UniqueID == Chip_Info_temp.UniqueID)) {
+            if (UniqueID == Chip_Info_temp.UniqueID) {
                 //found_flag = 1;
                 //detectICNum++;
             }
@@ -399,7 +408,7 @@ int Dedi_Search_Chip_Db(char* chTypeName, long RDIDCommand,
             tok = strtok(test, "\"= \t");
             //printf("JedecDeviceID = 0x%lx\n",strtol(tok,NULL,16));
             Chip_Info_temp.JedecDeviceID = strtol(tok, NULL, 16);
-            if ((UniqueID == Chip_Info_temp.JedecDeviceID)) {
+            if (UniqueID == Chip_Info_temp.JedecDeviceID) {
                 found_flag = 1;
 
                 strcpy(strTypeName[detectICNum], Chip_Info_temp.TypeName);

@@ -111,7 +111,7 @@ bool HexFileToBin(const char* filePath, unsigned char* vOutData, unsigned long* 
 
     unsigned int Nb_Bytes;
     unsigned int First_Word, Address, Segment, Upper_Address;
-    unsigned int Lowest_Address, Highest_Address, Starting_Address;
+    unsigned int Lowest_Address, Highest_Address, Starting_Address = 0;
     unsigned int Phys_Addr, hType;
     unsigned int temp;
 
@@ -125,7 +125,7 @@ bool HexFileToBin(const char* filePath, unsigned char* vOutData, unsigned long* 
     unsigned short int wCKS;
     unsigned short int w;
     unsigned int Cks_Type = CKS_8;
-    unsigned int Cks_Start, Cks_End, Cks_Addr, Cks_Value;
+    unsigned int Cks_Start, Cks_End, Cks_Addr = 0, Cks_Value = 0;
     bool Cks_range_set = false;
     bool Cks_Addr_set = false;
 
