@@ -34,4 +34,11 @@ Use brew to download and install libusb and pkg-config:
 % brew install libusb
 % brew install pkg-config
 ```
+You might need to add homebrew to your path and softlinks for libusb:
+```
+PATH="/opt/homebrew/bin:${PATH}"
+export PATH
+sudo ln -s /opt/homebrew/Cellar/libusb/1.0.27/include/libusb-1.0 /usr/local/include/libusb-1.0
+sudo ln -s /opt/homebrew/Cellar/libusb/1.0.27/lib/libusb-1.0.0.dylib /usr/local/lib/libusb-1.0.0.dylib
+```
 Now, follow the instructions to build for Linux

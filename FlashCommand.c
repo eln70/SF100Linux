@@ -89,8 +89,8 @@ int FlashCommand_SendCommand_OneOutOneIn(unsigned char* vOut, int out_len, unsig
 }
 
 int FlashCommand_SendCommand_SetupPacketForBulkWrite(struct CAddressRange* AddrRange, unsigned char modeWrite, unsigned char WriteCom, unsigned int PageSize, unsigned int AddressMode, int Index)
-{
-    unsigned char vInstruction[16];
+{ 
+    unsigned char vInstruction[15];
     CNTRPIPE_RQ rq;
     // length in terms of 256/128 bytes
     size_t divider;
@@ -105,6 +105,13 @@ int FlashCommand_SendCommand_SetupPacketForBulkWrite(struct CAddressRange* AddrR
     case PP_128BYTE: // 128 bytes
         divider = 7;
         break;
+    case PP_PROGRAM_ANYSIZE_PAGESIZE:
+        if(PageSize == 0x200)
+            divider = 9;
+        else if(PageSize == 0x400)
+            divider = 10;
+        else 
+            divider = 8;
     default: // 256 bytes
         divider = 8;
         break;
@@ -118,7 +125,7 @@ int FlashCommand_SendCommand_SetupPacketForBulkWrite(struct CAddressRange* AddrR
     vInstruction[3] = modeWrite; // PAGE_PROGRAM, PAGE_WRITE, AAI_1_BYTE, AAI_2_BYTE, PP_128BYTE, PP_AT26DF041
     vInstruction[4] = WriteCom;
 
-    if (Is_NewUSBCommand(Index)) {
+    if (Is_NewUSBCommand(Index)) { 
         vInstruction[5] = 0;
         vInstruction[6] = (AddrRange->start & 0xff);
         vInstruction[7] = ((AddrRange->start >> 8) & 0xff);
@@ -131,7 +138,7 @@ int FlashCommand_SendCommand_SetupPacketForBulkWrite(struct CAddressRange* AddrR
         vInstruction[14] = (AddressMode & 0xff);
         rq.Value = 0;
         rq.Index = 0;
-        rq.Length = (unsigned long)(16);
+        rq.Length = (unsigned long)(15);
     } else {
         rq.Value = (unsigned short)(AddrRange->start & 0xffff); // 16 bits LSB
         rq.Index = (unsigned short)((AddrRange->start >> 16) & 0xffff); // 16 bits MSB
@@ -187,9 +194,9 @@ int FlashCommand_SendCommand_SetupPacketForAT45DBBulkWrite(struct CAddressRange*
     return OutCtrlRequest(&rq, vInstruction, rq.Length, Index);
 }
 
-int FlashCommand_SendCommand_SetupPacketForBulkRead(struct CAddressRange* AddrRange, unsigned char modeRead, unsigned char ReadCom, int Index)
+int FlashCommand_SendCommand_SetupPacketForBulkRead(struct CAddressRange* AddrRange, unsigned char modeRead, unsigned char ReadCom, unsigned int AddrLen, unsigned int DummyLen, int Index)
 {
-    unsigned char vInstruction[10];
+    unsigned char vInstruction[12];
     CNTRPIPE_RQ rq;
     rq.Function = URB_FUNCTION_VENDOR_ENDPOINT;
     rq.Direction = VENDOR_DIRECTION_OUT;
@@ -205,15 +212,17 @@ int FlashCommand_SendCommand_SetupPacketForBulkRead(struct CAddressRange* AddrRa
     vInstruction[3] = modeRead; // BULK_NORM_READ, BULK_FAST_READ
     vInstruction[4] = ReadCom;
 
-    if (Is_NewUSBCommand(Index)) {
-        vInstruction[5] = 0;
+    if (Is_NewUSBCommand(Index)) { 
+        vInstruction[5] = 0xFF;
         vInstruction[6] = (AddrRange->start & 0xff);
         vInstruction[7] = ((AddrRange->start >> 8) & 0xff);
         vInstruction[8] = ((AddrRange->start >> 16) & 0xff);
         vInstruction[9] = ((AddrRange->start >> 24) & 0xff);
+        vInstruction[10] = (AddrLen & 0xff);
+        vInstruction[11] = (DummyLen & 0xff);
         rq.Value = 0;
         rq.Index = 0;
-        rq.Length = (unsigned long)(10);
+        rq.Length = (unsigned long)(12);
     } else {
         rq.Value = (unsigned short)(AddrRange->start & 0xffff); // 16 bits LSB
         rq.Index = (unsigned short)((AddrRange->start >> 16) & 0xffff); // 16 bits MSB

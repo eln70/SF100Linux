@@ -110,8 +110,8 @@ bool S19FileToBin(const char* filePath, unsigned char* vData, unsigned long* Fil
     FILE* Filin; /* input files */
 
     /* size in bytes */
-    const long MEMORY_SIZE = 1024 * 1024 * 4;
-    const long ADDRESS_MASK = 0x003FFFFF;
+    const long MEMORY_SIZE = 1024 * 1024 * 256;
+    const long ADDRESS_MASK = 0xFFFFFFFF;
     const int MAX_LINE_SIZE = 512;
 
     const int CKS_8 = 0;
@@ -131,7 +131,7 @@ bool S19FileToBin(const char* filePath, unsigned char* vData, unsigned long* Fil
     /* Application specific */
 
     unsigned int Nb_Bytes;
-    unsigned int Address, Lowest_Address, Highest_Address, Starting_Address = 0;
+    unsigned int Address, Lowest_Address, Highest_Address, Starting_Address;
     unsigned int Phys_Addr, sType;
     unsigned int temp;
 
@@ -145,7 +145,7 @@ bool S19FileToBin(const char* filePath, unsigned char* vData, unsigned long* Fil
     unsigned short int wCKS;
     unsigned short int w;
     unsigned int Cks_Type = CKS_8;
-    unsigned int Cks_Start, Cks_End, Cks_Addr = 0, Cks_Value = 0;
+    unsigned int Cks_Start, Cks_End, Cks_Addr, Cks_Value;
     bool Cks_range_set = false;
     bool Cks_Addr_set = false;
 

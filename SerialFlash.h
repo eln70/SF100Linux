@@ -53,14 +53,13 @@ int SerialFlash_Enable4ByteAddrMode(int bEnable, int Index);
 
 int SerialFlash_rangeBlankCheck(struct CAddressRange* Range, int Index);
 
-int SerialFlash_rangeProgram(struct CAddressRange* AddrRange, unsigned char* vData, int Index);
-
+int SerialFlash_rangeProgram(struct CAddressRange* AddrRange, unsigned char* vData, int Index); 
 int SerialFlash_rangeRead(struct CAddressRange* AddrRange, unsigned char* vData, int Index);
 
 int SerialFlash_DoPolling(int Index);
 
 int SerialFlash_is_good();
-
+int SerialFlash_batchErase_W25Mxx_Large(uintptr_t* vAddrs, size_t AddrSize, int Index);
 int SerialFlash_batchErase(uintptr_t* vAddrs, size_t AddrSize, int Index);
 
 int SerialFlash_rangeErase(unsigned char cmd, size_t sectionSize, struct CAddressRange* AddrRange, int Index);
@@ -70,8 +69,16 @@ int SerialFlash_DieErase(int Index);
 
 int SerialFlash_bulkPipeProgram(struct CAddressRange* AddrRange, unsigned char* vData, unsigned char modeWrite, unsigned char WriteCom, int Index);
 
+int SerialFlash_bulkPipeProgram_twoDie(struct CAddressRange* AddrRange, unsigned char* vData, unsigned char modeWrite, unsigned char WriteCom, int Index); 
+
 int SerialFlash_bulkPipeRead(struct CAddressRange* AddrRange, unsigned char* vData, unsigned char modeRead, unsigned char ReadCom, int Index);
 
+int SerialFlash_bulkPipeRead_Micron_4die(struct CAddressRange* AddrRange, unsigned char* vData, unsigned char modeRead, unsigned char ReadCom, int Index);
+
+int SerialFlash_bulkPipeRead_twoDie(struct CAddressRange* AddrRange, unsigned char* vData, unsigned char modeRead, unsigned char ReadCom, int Index);
+
+int SerialFlash_bulkPipeProgram_Micron_4Die(struct CAddressRange* AddrRange, unsigned char* vData, unsigned char modeRead, unsigned char ReadCom, int Index);
+bool SerialFlash_doSelectDie(unsigned char dieNum,int Index);
 void SerialFlash_SetCancelOperationFlag();
 
 void SerialFlash_ClearCancelOperationFlag();
@@ -94,6 +101,8 @@ bool CN25Qxxx_Large_doWRVCR(unsigned char ucVCR, int Index);
 bool CN25Qxxx_Large_doRDENVCR(unsigned char* ucENVCR, int Index);
 bool CN25Qxxx_Large_doWRENVCR(unsigned char ucENVCR, int Index);
 bool CS25FLxx_LargeEnable4ByteAddrMode(bool Enable4Byte, int Index);
+bool CN25Qxxx_Large_4Die_WREAR(unsigned char cSR,int Index);
+bool CN25Qxxx_Large_4Die_RDEAR(unsigned char* cEAR,int Index);
 size_t GetChipSize(void);
 size_t GetPageSize(void);
 bool SerialFlash_StartofOperation(int Index);
