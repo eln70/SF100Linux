@@ -407,7 +407,7 @@ void GetLogPath(char* pBuf)
   }  
   *(strrchr(pBuf, '/')) = 0;
 #else
-  if (readlink("/proc/self/exe", pBuf, 512) != -1) {
+  if (readlink("/proc/self/exe", pBuf, 512) == -1) {
     exit(-1);
   }
 #endif
